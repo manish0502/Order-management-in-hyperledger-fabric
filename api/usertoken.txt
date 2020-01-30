@@ -1,0 +1,26 @@
+1.username:pawan
+  orgName:audi
+{
+    "success": true,
+    "secret": "",
+    "message": "Pawan enrolled Successfully",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzk5ODMxNDAsInVzZXJuYW1lIjoiUGF3YW4iLCJvcmdOYW1lIjoiYXVkaSIsImlhdCI6MTU3OTk0NzE0MH0._Uh5ynGholL_SsMhqELbufmOi9jUopL8-F72QxsL1Go"
+}
+
+
+2. username:manish
+  orgName:mrf
+  {
+    "success": true,
+    "secret": "",
+    "message": "manish enrolled Successfully",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzk5ODMzOTMsInVzZXJuYW1lIjoibWFuaXNoIiwib3JnTmFtZSI6Im1yZiIsImlhdCI6MTU3OTk0NzM5M30.IZjrlalFjcrXDPHpv8lgzvfUP_G5UYRS-mHoi4aorko"
+  }
+
+
+  channels
+   
+  1.{
+	"channelName":"amchannel",
+	"channelConfigPath":"../../channel-artifacts/AMChannel.tx"
+}

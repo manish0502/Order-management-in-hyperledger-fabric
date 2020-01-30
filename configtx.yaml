@@ -1,0 +1,177 @@
+
+Organizations:
+    - &OrdererOrg
+        Name: OrdererMSP
+        ID: OrdererMSP
+        MSPDir: ./crypto-config/ordererOrganizations/ordermanagement.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"        
+
+    - &Audi
+        Name: AudiMSP
+        ID: AudiMSP
+        MSPDir: ./crypto-config/peerOrganizations/audi.ordermanagement.com/msp
+        AnchorPeers:
+            - Host: peer0.audi.ordermanagement.com
+              Port: 7051
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('AudiMSP.admin', 'AudiMSP.peer', 'AudiMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('AudiMSP.admin', 'AudiMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('AudiMSP.admin')"
+    - &MRF
+        Name: MRFMSP
+        ID: MRFMSP
+        MSPDir: ./crypto-config/peerOrganizations/mrf.ordermanagement.com/msp
+        AnchorPeers:
+            - Host: peer0.mrf.ordermanagement.com
+              Port: 9051
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('MRFMSP.admin', 'MRFMSP.peer', 'MRFMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('MRFMSP.admin', 'MRFMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('MRFMSP.admin')"
+    - &Bridgestone
+        Name: BridgestoneMSP
+        ID: BridgestoneMSP
+        MSPDir: ./crypto-config/peerOrganizations/bridgestone.ordermanagement.com/msp
+        AnchorPeers:
+            - Host: peer0.bridgestone.ordermanagement.com
+              Port: 11051
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('BridgestoneMSP.admin', 'BridgestoneMSP.peer', 'BridgestoneMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('BridgestoneMSP.admin', 'BridgestoneMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('BridgestoneMSP.admin')"
+    
+Capabilities:
+    Channel: &ChannelCapabilities
+        V1_4_3: true
+        V1_3: false
+        V1_1: false
+    orderer: &OrdererCapabilities
+        V1_4_2: true
+        V1_1: false
+    Application: &ApplicationCapabilities
+        V1_4_2: true
+        V1_3: false
+        V1_2: false
+        V1_1: false
+
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+ 
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.ordermanagement.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 98 MB
+        PreferredMaxBytes: 512 KB
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+Profiles:
+    ThreeOrgsOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            OrderConsortium:
+                Organizations:
+                    - *Audi
+                    - *MRF
+                    - *Bridgestone
+
+    ABChannel:
+        Consortium: OrderConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Audi
+                - *Bridgestone
+            Capabilities:
+                <<: *ApplicationCapabilities
+    AMChannel:
+        Consortium: OrderConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Audi
+                - *MRF
+            Capabilities:
+                <<: *ApplicationCapabilities
+        

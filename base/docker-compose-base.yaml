@@ -1,0 +1,156 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.ordermanagement.com:
+    container_name: orderer.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/ordermanagement.com/orderers/orderer.ordermanagement.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/ordermanagement.com/orderers/orderer.ordermanagement.com/tls/:/var/hyperledger/orderer/tls
+        - orderer.ordermanagement.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.audi.ordermanagement.com:
+    container_name: peer0.audi.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.audi.ordermanagement.com
+      - CORE_PEER_ADDRESS=peer0.audi.ordermanagement.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.audi.ordermanagement.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.audi.ordermanagement.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.audi.ordermanagement.com:7051
+      - CORE_PEER_LOCALMSPID=AudiMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/audi.ordermanagement.com/peers/peer0.audi.ordermanagement.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/audi.ordermanagement.com/peers/peer0.audi.ordermanagement.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.audi.ordermanagement.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer1.audi.ordermanagement.com:
+    container_name: peer1.audi.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.audi.ordermanagement.com
+      - CORE_PEER_ADDRESS=peer1.audi.ordermanagement.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.audi.ordermanagement.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.audi.ordermanagement.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.audi.ordermanagement.com:7051
+      - CORE_PEER_LOCALMSPID=AudiMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/audi.ordermanagement.com/peers/peer1.audi.ordermanagement.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/audi.ordermanagement.com/peers/peer1.audi.ordermanagement.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.audi.ordermanagement.com:/var/hyperledger/production
+
+    ports:
+      - 8051:8051
+
+  peer0.mrf.ordermanagement.com:
+    container_name: peer0.mrf.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.mrf.ordermanagement.com
+      - CORE_PEER_ADDRESS=peer0.mrf.ordermanagement.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.mrf.ordermanagement.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.mrf.ordermanagement.com:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.mrf.ordermanagement.com:10051
+      - CORE_PEER_LOCALMSPID=MRFMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/mrf.ordermanagement.com/peers/peer0.mrf.ordermanagement.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/mrf.ordermanagement.com/peers/peer0.mrf.ordermanagement.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.mrf.ordermanagement.com:/var/hyperledger/production
+    ports:
+      - 9051:9051
+
+  peer1.mrf.ordermanagement.com:
+    container_name: peer1.mrf.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.mrf.ordermanagement.com
+      - CORE_PEER_ADDRESS=peer1.mrf.ordermanagement.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.mrf.ordermanagement.com:10052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.mrf.ordermanagement.com:10051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.mrf.ordermanagement.com:9051
+      - CORE_PEER_LOCALMSPID=MRFMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/mrf.ordermanagement.com/peers/peer1.mrf.ordermanagement.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/mrf.ordermanagement.com/peers/peer1.mrf.ordermanagement.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.mrf.ordermanagement.com:/var/hyperledger/production
+    ports:
+      - 10051:10051
+
+
+  peer0.bridgestone.ordermanagement.com:
+    container_name: peer0.bridgestone.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.bridgestone.ordermanagement.com
+      - CORE_PEER_ADDRESS=peer0.bridgestone.ordermanagement.com:11051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.bridgestone.ordermanagement.com:11052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.bridgestone.ordermanagement.com:12051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bridgestone.ordermanagement.com:11051
+      - CORE_PEER_LOCALMSPID=BridgestoneMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/bridgestone.ordermanagement.com/peers/peer0.bridgestone.ordermanagement.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/bridgestone.ordermanagement.com/peers/peer0.bridgestone.ordermanagement.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.bridgestone.ordermanagement.com:/var/hyperledger/production
+    ports:
+      - 11051:11051
+
+  peer1.bridgestone.ordermanagement.com:
+    container_name: peer1.bridgestone.ordermanagement.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.bridgestone.ordermanagement.com
+      - CORE_PEER_ADDRESS=peer1.bridgestone.ordermanagement.com:12051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:12051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.bridgestone.ordermanagement.com:12052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:12052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.bridgestone.ordermanagement.com:12051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.bridgestone.ordermanagement.com:11051
+      - CORE_PEER_LOCALMSPID=BridgestoneMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/bridgestone.ordermanagement.com/peers/peer1.bridgestone.ordermanagement.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/bridgestone.ordermanagement.com/peers/peer1.bridgestone.ordermanagement.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.bridgestone.ordermanagement.com:/var/hyperledger/production
+
+    ports:
+      - 12051:12051
